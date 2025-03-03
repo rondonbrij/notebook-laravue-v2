@@ -8,6 +8,7 @@ Route::get('/', function () {
     return Inertia::render('Note');
 });
 
+Route::get('/', [NoteController::class,'index']);
 
 // Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
 // Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');

@@ -11,7 +11,7 @@ class NoteController extends Controller
     //This block retrieves all notes from the database and passes them to the Note.vue component
     public function index()
     {
-        $notes = Note::all(); //retrieves all notes from the database
+        $notes = Note::latest()->get(); //retrieves all notes from the database in descending order by creation date
         return Inertia::render('Note', ['notes' => $notes]); //pass
     }//End of block
 
