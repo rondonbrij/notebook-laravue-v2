@@ -8,11 +8,6 @@ use Inertia\Inertia;
 
 class NoteController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
-
     public function index()
     {
         $query = Note::latest();
@@ -27,6 +22,13 @@ class NoteController extends Controller
         return Inertia::render('Dashboard', [
             'notes' => $notes,
             'filters' => request()->only('search')
+        ]);
+    }
+
+    public function show(Note $note)
+    {
+        return Inertia::render('Notes/Show', [
+            'note' => $note
         ]);
     }
 

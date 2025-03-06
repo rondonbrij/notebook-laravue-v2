@@ -17,10 +17,6 @@ const isEditing = ref(false);
 const form = ref({ id: null, title: "", content: "" });
 const search = ref(props.filters?.search || '');
 
-// Detail view state
-const showDetailDialog = ref(false);
-const currentNote = ref(null);
-
 // Show create dialog
 const showCreateDialog = () => {
   form.value = { id: null, title: "", content: "" };
@@ -28,10 +24,9 @@ const showCreateDialog = () => {
   showDialog.value = true;
 };
 
-// Show detail view
+// View note in a new page
 const viewNote = (note) => {
-  currentNote.value = { ...note };
-  showDetailDialog.value = true;
+  router.get(`/notes/${note.id}`);
 };
 
 // Open edit dialog
@@ -108,11 +103,6 @@ const deleteNote = (id) => {
             'Your note has been deleted.',
             'success'
           );
-          
-          // Close detail dialog if it was open for this note
-          if (showDetailDialog.value && currentNote.value && currentNote.value.id === id) {
-            showDetailDialog.value = false;
-          }
         }
       });
     }
@@ -209,14 +199,14 @@ const resetSearch = () => {
             <p class="mt-1 text-sm text-gray-500">
               Get started by creating a new note
             </p>
-            <!-- <div class="mt-6">
+            <div class="mt-6">
               <button
                 @click="showCreateDialog()"
                 class="bg-green-500 text-white px-4 py-2 rounded-md"
               >
                 Add Note
               </button>
-            </div> -->
+            </div>
           </div>
 
           <!-- Pagination -->
@@ -263,38 +253,6 @@ const resetSearch = () => {
             class="bg-green-500 text-white px-4 py-2 rounded-md"
           >
             Save
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Note Detail Modal -->
-    <div v-if="showDetailDialog && currentNote" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
-        <h3 class="text-xl font-bold text-gray-900 mb-2">
-          {{ currentNote.title }}
-        </h3>
-        <div class="border-t border-gray-200 pt-4 mt-2">
-          <p class="whitespace-pre-wrap">{{ currentNote.content }}</p>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-          <button
-            @click="editNote(currentNote); showDetailDialog = false;"
-            class="bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            Edit
-          </button>
-          <button
-            @click="deleteNote(currentNote.id)"
-            class="bg-red-500 text-white px-4 py-2 rounded-md"
-          >
-            Delete
-          </button>
-          <button
-            @click="showDetailDialog = false"
-            class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md"
-          >
-            Close
           </button>
         </div>
       </div>
