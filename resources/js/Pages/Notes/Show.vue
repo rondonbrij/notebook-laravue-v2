@@ -70,8 +70,10 @@ const deleteNote = () => {
             'Deleted!',
             'Your note has been deleted.',
             'success'
-          );
-          router.visit('/dashboard');
+            ).then(() => {
+            // Redirect to dashboard
+            router.push({ name: 'dashboard' });  
+          });
         }
       });
     }
@@ -120,7 +122,7 @@ const goBack = () => {
             </div>
           </div>
 
-          <div class="mt-8 flex space-x-4">
+          <div class="mt-8 flex justify-end          space-x-4">
             <button
               @click="editNote"
               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"

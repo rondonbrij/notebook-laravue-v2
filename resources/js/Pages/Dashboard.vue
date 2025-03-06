@@ -7,7 +7,7 @@ import Pagination from '@/Components/Pagination.vue';
 import Swal from 'sweetalert2';
 
 const props = defineProps({
-  notes: Object, // Changed to Object to receive paginated data
+  notes: Object,
   filters: Object
 });
 
@@ -102,7 +102,10 @@ const deleteNote = (id) => {
             'Deleted!',
             'Your note has been deleted.',
             'success'
-          );
+          
+          ).then(() => {
+            router.push({ name: 'dashboard' });  
+          });
         }
       });
     }
@@ -176,7 +179,7 @@ const resetSearch = () => {
             >
               <h3 class="text-lg font-bold truncate">{{ note.title }}</h3>
               <p class="text-gray-500 truncate mt-2">{{ note.content }}</p>
-              <div class="mt-4 flex space-x-2">
+              <div class="mt-4 flex justify-end    space-x-2">
                 <button
                   @click.stop="editNote(note)"
                   class="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
