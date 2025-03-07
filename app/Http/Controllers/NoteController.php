@@ -17,8 +17,9 @@ class NoteController extends Controller
                   ->orWhere('content', 'like', '%' . request('search') . '%');
         }
         
-        $notes = $query->paginate(9)->withQueryString();
-        
+        // $notes = $query->paginate(9)->withQueryString();
+        $notes = $query->paginate(perPage: 9)->onEachSide(1)->withQueryString();
+
         return Inertia::render('Dashboard', [
             'notes' => $notes,
             'filters' => request()->only('search')
