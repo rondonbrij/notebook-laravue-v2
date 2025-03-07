@@ -1,19 +1,30 @@
 <?php
 
 use App\Http\Controllers\NoteController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
-    return Inertia::render('Note');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::get('/', [NoteController::class,'index']);
-
-// Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
-// Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
-// Route::get('/notes/{note}', [NoteController::class, 'show'])->name('notes.show');
-// Route::put('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
-// Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
-
-Route::resource('notes', NoteController::class); //this line replaces all the commented above lines sabi ni gpt 
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', [NoteController::class, 'index'])->name('dashboard');
+    Route::resource('notes', NoteController::class)->except(['index', 'create', 'edit']);
+});

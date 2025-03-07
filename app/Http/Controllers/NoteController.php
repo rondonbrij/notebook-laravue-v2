@@ -8,57 +8,60 @@ use Inertia\Inertia;
 
 class NoteController extends Controller
 {
-    //This block retrieves all notes from the database and passes them to the Note.vue component
     public function index()
     {
-        $notes = Note::latest()->get(); //retrieves all notes from the database in descending order by creation date
-        return Inertia::render('Note', ['notes' => $notes]); //pass
-    }//End of block
+        $query = Note::latest();
+        
+        if (request('search')) {
+            $query->where('title', 'like', '%' . request('search') . '%')
+                  ->orWhere('content', 'like', '%' . request('search') . '%');
+        }
+        
+        // $notes = $query->paginate(9)->withQueryString();
+        $notes = $query->paginate(perPage: 9)->onEachSide(1)->withQueryString();
 
-    //This block creates a new note in the database, validates, and returns to the main page again
+        return Inertia::render('Dashboard', [
+            'notes' => $notes,
+            'filters' => request()->only('search')
+        ]);
+    }
+
+    public function show(Note $note)
+    {
+        return Inertia::render('Notes/Show', [
+            'note' => $note
+        ]);
+    }
+
     public function store(Request $request)
     {
-
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-        ]); //End of block for validation
+        ]);
 
-        //Note::create(attributes: $request->only(['title', 'content'])); //creates a new note in the database
         Note::create([
             'title' => $request->input('title'),
             'content' => $request->input('content')
-
         ]);
-        return redirect()->back(); //returns to the previous page
 
-    } //end of block
+        return redirect()->back();
+    }
 
-    //This block shows a single note
-    public function show(Note $note)
-    {
-        return Inertia::render('OneNote', ['note' => $note]);
-    } //block ends
-
-
-    //This block updates a note in the database
     public function update(Request $request, Note $note)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-        ]); //End of block for validation
+        ]);
 
-        $note->update($request->only(['title', 'content'])); //updates a note in the database
+        $note->update($request->only(['title', 'content']));
 
-        return redirect()->back(); //returns to the previous page
+        return redirect()->back();
+    }
 
-    } //block ends
-
-    //delete a note
     public function destroy(Note $note)
     {
-        $note->delete(); //deletes a note from the database
-        return redirect()->back(); //returns to the previous page
-    } //block ends 
+        $note->delete();
+        return redirect()->route('dashboard');    }
 }
